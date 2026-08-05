@@ -116,7 +116,7 @@ def _preprocess_tex(content: str) -> str:
 
 def _is_within(path: Path, parent: Path) -> bool:
     try:
-        path.relative_to(parent)
+        path.resolve().relative_to(parent.resolve())
         return True
     except ValueError:
         return False
@@ -156,6 +156,7 @@ def _read_text_file(path: Path, workspace: Path, visited: set[Path] | None = Non
 
 def _read_source(path: str, workspace: Path) -> tuple[str, str | None]:
     """Return (content, error_json). If directory, reads top files."""
+    workspace = workspace.resolve()
     full = (workspace / path).resolve()
     if not _is_within(full, workspace):
         return "", json.dumps({"error": f"Path outside workspace: {path}", "extracted": {}})
